@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="SKINNOVA is an on-device, climate-adaptive skin longevity prototype for Indian GenZ developed for the L'Oréal Sustainability Challenge 2026. Computes honest, explainable visible skin signal proxies and fuses live Open-Meteo telemetry into personalized minimal barrier routines.">
+  <meta name="theme-color" content="#0B1630">
+  <title>SKINNOVA | Climate-Adaptive Skin Longevity for Indian GenZ</title>
+
+  <!-- Google Fonts: Fraunces (Headlines) & Inter (UI/Data) with fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+  <div class="app-container" id="app">
+    
+    <!-- Persistent Privacy & Device Security Badge -->
+    <aside class="privacy-badge-bar" role="status" aria-label="Privacy guarantee">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+      <span>Processed on your phone. Photo never leaves it.</span>
+    </aside>
+
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="brand-block">
+        <h1 class="brand-name">
+          SKINNOVA
+          <span class="brand-dot" aria-hidden="true"></span>
+        </h1>
+        <span class="brand-subtitle">Climate Skin Longevity · R&amp;I 2026</span>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggleBtn" class="btn-icon" aria-label="Toggle light and dark theme" title="Toggle theme">
+          <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Judge Mode Fast-Demonstration Bar -->
+    <nav class="judge-bar" aria-label="Judge quick presets">
+      <span class="judge-bar-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        Judge Mode:
+      </span>
+      <div class="judge-presets">
+        <button id="presetDelhiBtn" class="btn-preset active" data-profile="delhi_winter" title="Load Delhi winter smog preset">
+          Delhi Smog
+        </button>
+        <button id="presetChennaiBtn" class="btn-preset" data-profile="chennai_summer" title="Load Chennai coastal summer preset">
+          Chennai UV
+        </button>
+      </div>
+    </nav>
+
+    <!-- 4-Step Navigation Progress -->
+    <nav class="stepper-nav" aria-label="Protocol steps">
+      <ol class="stepper-list">
+        <li>
+          <button class="step-item active" data-step="1" id="stepBtn1">
+            <span class="step-bubble">1</span>
+            <span class="step-label">Scan</span>
+          </button>
+        </li>
+        <li>
+          <button class="step-item" data-step="2" id="stepBtn2">
+            <span class="step-bubble">2</span>
+            <span class="step-label">Climate</span>
+          </button>
+        </li>
+        <li>
+          <button class="step-item" data-step="3" id="stepBtn3">
+            <span class="step-bubble">3</span>
+            <span class="step-label">Fusion</span>
+          </button>
+        </li>
+        <li>
+          <button class="step-item" data-step="4" id="stepBtn4">
+            <span class="step-bubble">4</span>
+            <span class="step-label">Routine</span>
+          </button>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Main Dynamic Container -->
+    <main class="main-content">
+
+      <!-- ============================================== -->
+      <!-- STEP 1: SKIN SIGNAL SCAN (On-Device Computer Vision) -->
+      <!-- ============================================== -->
+      <section class="view-section active" id="viewStep1" aria-labelledby="scanHeading">
+        <div class="card-header-row">
+          <div>
+            <h2 id="scanHeading" class="card-title">Visible Skin Signal Scan</h2>
+            <p class="card-caption">On-device CIELAB chromatic and micro-texture analysis</p>
+          </div>
+          <span class="climate-source-badge sample" id="scanStatusBadge">Sample Calibrated</span>
+        </div>
+
+        <!-- Scanner Viewport: Canvas / Video / Overlays -->
+        <div class="scanner-viewport" id="scannerViewport">
+          <video id="cameraVideo" class="scanner-video" playsinline muted style="display: none;"></video>
+          <canvas id="mainCanvas" class="scanner-canvas" width="480" height="480"></canvas>
+          <canvas id="overlayCanvas" class="scanner-overlay" width="480" height="480"></canvas>
+        </div>
+
+        <!-- Lighting Quality Gate -->
+        <div class="lighting-bar" id="lightingBar" aria-live="polite">
+          <span class="lighting-status-tag">
+            <span class="lighting-dot optimal" id="lightingDot"></span>
+            <span id="lightingStatusText">Optimal Lighting (Confidence: 94%)</span>
+          </span>
+          <span id="lightingLVal" class="tabular-nums" style="color: var(--text-muted); font-size: 11px;">Mean L*: 54</span>
+        </div>
+        <div class="lighting-issues" id="lightingIssuesBox" role="alert">
+          <!-- Populated when lighting is uneven, underexposed or overexposed -->
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="scanner-controls">
+          <button id="btnStartCamera" class="btn-secondary" style="flex: 1;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span id="cameraBtnLabel">Use Camera</span>
+          </button>
+          
+          <button id="btnUploadFile" class="btn-secondary" style="flex: 1;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            Upload Photo
+          </button>
+          <input type="file" id="fileInput" accept="image/*" style="display: none;" aria-hidden="true">
+        </div>
+
+        <!-- Camera Capture Button (shown when streaming) -->
+        <button id="btnCapturePhoto" class="btn-primary" style="display: none;">
+          Capture Current Frame
+        </button>
+
+        <!-- Scientific Fairness & Ethical Explanations -->
+        <div class="clinical-card">
+          <div class="card-header-row">
+            <span class="card-title" style="font-size: var(--text-sm);">Fairness by Design: Relative Baseline Calibration</span>
+            <button class="btn-text-link" id="btnExplainFairness">How it works</button>
+          </div>
+          <p style="font-size: var(--text-xs); line-height: 1.45;">
+            All signals are evaluated against your individual self-anchored baseline rather than arbitrary light-skin thresholds. This mathematically eliminates tone-bias across Indian Fitzpatrick phototypes III through VI.
+          </p>
+          <div style="font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--color-border); padding-top: var(--space-2);">
+            Visible proxies, not a medical diagnosis. Barrier damage cannot be measured from a selfie.
+          </div>
+        </div>
+
+        <!-- Visible Proxy Metric Cards -->
+        <div class="metrics-grid" id="scanMetricsGrid">
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">Redness (Δa*)</span>
+              <span class="metric-band" id="metricRednessBand">Moderate</span>
+            </div>
+            <span class="metric-raw-val" id="metricRednessVal">+4.0 vs base</span>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">Dullness (ΔL*)</span>
+              <span class="metric-band" id="metricDullnessBand">Elevated</span>
+            </div>
+            <span class="metric-raw-val" id="metricDullnessVal">-3.0 L* shift</span>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">Texture (Laplacian)</span>
+              <span class="metric-band" id="metricTextureBand">Moderate</span>
+            </div>
+            <span class="metric-raw-val" id="metricTextureVal">52.0 variance</span>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">Shine / Sebum</span>
+              <span class="metric-band" id="metricShineBand">Controlled</span>
+            </div>
+            <span class="metric-raw-val" id="metricShineVal">2.5% specular</span>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btnNextToClimate">
+          Proceed to Climate Telemetry
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- STEP 2: CLIMATE & ENVIRONMENTAL TELEMETRY -->
+      <!-- ============================================== -->
+      <section class="view-section" id="viewStep2" aria-labelledby="climateHeading">
+        <div class="card-header-row">
+          <div>
+            <h2 id="climateHeading" class="card-title">Environmental Telemetry</h2>
+            <p class="card-caption">Live Open-Meteo Weather &amp; Air Quality Data</p>
+          </div>
+          <span class="climate-source-badge live" id="climateModeBadge">Live Open-Meteo</span>
+        </div>
+
+        <!-- City Selector & Location Controls -->
+        <div class="clinical-card">
+          <label for="citySelect" class="metric-name">Select Monitoring Region (India):</label>
+          <div style="display: flex; gap: var(--space-2); margin-top: 4px;">
+            <select id="citySelect" class="form-select" aria-label="Select Indian City">
+              <!-- Populated dynamically via JS -->
+            </select>
+            <button id="btnGeoLocation" class="btn-secondary" style="white-space: nowrap; padding: 0 12px;" title="Use current GPS location">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="12 2 15 9 22 12 15 15 12 22 9 15 2 12 9 9 12 2"/>
+              </svg>
+              GPS
+            </button>
+          </div>
+          <div id="climateSourceNotice" style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+            Source: Live Open-Meteo Telemetry (Delhi baseline)
+          </div>
+        </div>
+
+        <!-- Live Climate Metric Grid -->
+        <div class="metrics-grid">
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">UV Index</span>
+              <span class="metric-band" id="climateUvBand">Moderate (3.2)</span>
+            </div>
+            <span class="metric-raw-val">WHO Tier 2 · Moderate Sun Exposure</span>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">PM2.5 Ambient</span>
+              <span class="metric-band" id="climatePmBand" style="color: var(--color-status-severe);">Severe (195 µg)</span>
+            </div>
+            <span class="metric-raw-val">CPCB NAQI: 345 (Severe Smog)</span>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">Temperature</span>
+              <span class="metric-band" id="climateTempBand">16°C</span>
+            </div>
+            <span class="metric-raw-val">Cool Ambient Temperature</span>
+          </div>
+
+          <div class="metric-tile">
+            <div class="metric-header">
+              <span class="metric-name">Relative Humidity</span>
+              <span class="metric-band" id="climateRhBand">72% RH</span>
+            </div>
+            <span class="metric-raw-val">Elevated Moisture Retention</span>
+          </div>
+        </div>
+
+        <!-- Manual Parameter Tuning Sliders for Judges -->
+        <div class="clinical-card">
+          <div class="card-header-row">
+            <span class="card-title" style="font-size: var(--text-sm);">Manual Calibration Sliders</span>
+            <button class="btn-text-link" id="btnResetClimate">Reset to Preset</button>
+          </div>
+          <div class="slider-group">
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <span>UV Index: <strong id="sliderValUv" class="tabular-nums">3.2</strong></span>
+                <span class="metric-raw-val">WHO 0–12+</span>
+              </div>
+              <input type="range" id="sliderUv" class="slider-input" min="0" max="13" step="0.5" value="3.2">
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <span>PM2.5: <strong id="sliderValPm" class="tabular-nums">195 µg/m³</strong></span>
+                <span class="metric-raw-val">CPCB 0–300</span>
+              </div>
+              <input type="range" id="sliderPm" class="slider-input" min="5" max="300" step="5" value="195">
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <span>Temperature: <strong id="sliderValTemp" class="tabular-nums">16°C</strong></span>
+                <span class="metric-raw-val">10°C–45°C</span>
+              </div>
+              <input type="range" id="sliderTemp" class="slider-input" min="10" max="45" step="1" value="16">
+            </div>
+
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <span>Relative Humidity: <strong id="sliderValRh" class="tabular-nums">72%</strong></span>
+                <span class="metric-raw-val">20%–95%</span>
+              </div>
+              <input type="range" id="sliderRh" class="slider-input" min="20" max="95" step="1" value="72">
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btnNextToFusion">
+          Synthesize Fusion Index
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- STEP 3: FUSION & SKIN RESILIENCE SCORE -->
+      <!-- ============================================== -->
+      <section class="view-section" id="viewStep3" aria-labelledby="fusionHeading">
+        <div class="card-header-row">
+          <div>
+            <h2 id="fusionHeading" class="card-title">Longevity Fusion Index</h2>
+            <p class="card-caption">Dual synthesis of environmental load &amp; facial proxies</p>
+          </div>
+          <span class="climate-source-badge live">Validated Weights</span>
+        </div>
+
+        <!-- Resilience Ring Gauge Card -->
+        <div class="clinical-card resilience-hero">
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg" viewBox="0 0 160 160" aria-hidden="true">
+              <circle class="gauge-circle-bg" cx="80" cy="80" r="70"></circle>
+              <circle class="gauge-circle-val" id="resilienceRing" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div class="gauge-center-content">
+              <span class="gauge-band-text" id="resilienceBandText">High</span>
+              <span class="gauge-num-sub tabular-nums" id="resilienceNumText">74 / 100</span>
+            </div>
+          </div>
+
+          <h3 class="serif-heading" style="font-size: var(--text-lg); margin-top: 4px;">Skin Resilience Score</h3>
+          <p class="score-meaning-sentence" id="resilienceStatement">
+            Solid barrier integrity. Minor adaptive reinforcement recommended for daytime particulate pollution.
+          </p>
+
+          <button class="btn-text-link" id="btnOpenResilienceDrawer">
+            How this score is calculated
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Climate Skin-Stress Index (CSSI) Summary Card -->
+        <div class="clinical-card">
+          <div class="card-header-row">
+            <div>
+              <span class="metric-name">Climate Skin-Stress Index (CSSI)</span>
+              <div class="card-title" id="cssiBandBadge" style="color: var(--color-status-high);">
+                High Stress (<span id="cssiScoreNum" class="tabular-nums">68</span> / 100)
+              </div>
+            </div>
+            <button class="btn-text-link" id="btnOpenCssiDrawer">Inspect Formula</button>
+          </div>
+          <p style="font-size: var(--text-xs); line-height: 1.45;" id="cssiInterpretationText">
+            Substantial ambient particulate load. PM2.5 deposition accelerates lipid peroxidation, necessitating antioxidant defense.
+          </p>
+          <div style="font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between;">
+            <span>UV Weight: 35% · PM2.5: 35%</span>
+            <span>RH-Heat: 20% · Temp: 10%</span>
+          </div>
+        </div>
+
+        <!-- 30-Day Longitudinal Resilience Trend Card -->
+        <div class="clinical-card">
+          <div class="card-header-row">
+            <div>
+              <span class="metric-name">Longitudinal Skin Tracking</span>
+              <div class="card-title" style="font-size: var(--text-sm);">30-Day Barrier Resilience Trend</div>
+            </div>
+            <span class="climate-source-badge sample">Local Memory</span>
+          </div>
+          <div class="trend-container" id="trendGraphContainer">
+            <!-- Rendered via inline SVG -->
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted);">
+            Stored locally in browser localStorage. No patient data or scan images are transmitted.
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btnNextToRoutine">
+          Formulate Adaptive Routine
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- STEP 4: ADAPTIVE ROUTINE & SUSTAINABILITY -->
+      <!-- ============================================== -->
+      <section class="view-section" id="viewStep4" aria-labelledby="routineHeading">
+        <div class="card-header-row">
+          <div>
+            <h2 id="routineHeading" class="card-title">Climate-Adaptive Routine</h2>
+            <p class="card-caption">Targeted barrier protection based on real-time stress</p>
+          </div>
+          <span class="climate-source-badge live">Minimalist Rule-Engine</span>
+        </div>
+
+        <!-- "Skip-Today" State Banner (When Low Stress) -->
+        <div class="routine-banner-skip" id="skipTodayBanner" style="display: none;">
+          <svg class="routine-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <div>
+            <strong style="color: var(--color-teal); font-size: var(--text-sm); display: block;">
+              Skip-Today Mode Active: <span id="avoidedCountText">2 Steps Bypassed</span> (estimate)
+            </strong>
+            <p style="font-size: var(--text-xs); margin-top: 2px;">
+              Ambient environmental stress is low. Over-layering actives today could disrupt natural lipid homeostasis.
+            </p>
+          </div>
+        </div>
+
+        <!-- AM Morning Protocol -->
+        <div class="routine-section-block">
+          <div class="metric-name" style="color: var(--color-gold); font-weight: 600;">AM Morning Protocol · Defense &amp; Shield</div>
+          <ul class="routine-steps-list" id="amStepsList">
+            <!-- Injected via JS -->
+          </ul>
+        </div>
+
+        <!-- PM Evening Protocol -->
+        <div class="routine-section-block">
+          <div class="metric-name" style="color: var(--color-teal); font-weight: 600;">PM Evening Protocol · Cellular Restoration</div>
+          <ul class="routine-steps-list" id="pmStepsList">
+            <!-- Injected via JS -->
+          </ul>
+        </div>
+
+        <!-- Indian Climate Nuances & Skin Tone Context -->
+        <div class="clinical-card">
+          <span class="card-title" style="font-size: var(--text-sm);">Indian GenZ Formulation Insights</span>
+          <div id="indianContextList" style="display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--text-xs);">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+        <!-- Paired Formulation Concept Card -->
+        <div class="formulation-concept-card">
+          <div class="card-header-row">
+            <span class="formulation-badge">Research Concept #SK-26-IND</span>
+            <span class="climate-source-badge sample">Concept, not a product</span>
+          </div>
+          <h3 class="formulation-title">Bio-Adaptive Antioxidant &amp; Ceramide Gel-Cream</h3>
+          <p style="font-size: var(--text-xs); color: var(--text-secondary);">
+            Engineered specifically for Indian urban climates: micro-droplet water-break texture providing non-greasy barrier defense under 80%+ relative humidity.
+          </p>
+          <div class="actives-list">
+            <div class="active-item">
+              <span class="active-name">Phyllanthus Emblica (Amla) Polyphenol (2%):</span>
+              <span class="active-desc"> Ethically wild-harvested under Indian Biological Diversity Act (ABS certified). Suppresses PM2.5-induced collagenase.</span>
+            </div>
+            <div class="active-item">
+              <span class="active-name">Pharmaceutical Niacinamide (4%):</span>
+              <span class="active-desc"> Balances sebum flux in tropical heat and stimulates endogenous ceramide synthesis.</span>
+            </div>
+            <div class="active-item">
+              <span class="active-name">Bio-Identical Ceramides (NP, AP, EOP 1.5%):</span>
+              <span class="active-desc"> Yeast-derived lamellar lipid reconstruction matrix.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sustainability & Circularity Dashboard -->
+        <div class="clinical-card">
+          <div class="card-header-row">
+            <span class="card-title" style="font-size: var(--text-sm);">Longevity &amp; Circularity Impact</span>
+            <span class="climate-source-badge live">Target Estimates</span>
+          </div>
+          <div class="sustainability-stats-grid">
+            <div class="sustain-stat-box">
+              <div class="sustain-val" id="sustainStreakVal">5 Days</div>
+              <div class="sustain-label">"Use-Less-Today" Streak</div>
+            </div>
+            <div class="sustain-stat-box">
+              <div class="sustain-val" id="sustainAvoidedVal">9</div>
+              <div class="sustain-label">Product Steps Saved (Est.)</div>
+            </div>
+            <div class="sustain-stat-box">
+              <div class="sustain-val" id="sustainCarbonVal">36 g</div>
+              <div class="sustain-label">Packaging CO₂e Avoided</div>
+            </div>
+            <div class="sustain-stat-box">
+              <div class="sustain-val" id="sustainEnergyVal">0.32 Wh</div>
+              <div class="sustain-label">On-Device Edge Compute Saved</div>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); line-height: 1.4; margin-top: 4px;">
+            By processing on-device and preventing cosmetic over-application, SKINNOVA reduces consumer product waste and eliminates cloud server GPU inference energy.
+          </div>
+        </div>
+
+        <button class="btn-secondary" id="btnRestartScan">
+          Return to Scan &amp; Recalibrate
+        </button>
+      </section>
+
+    </main>
+
+    <!-- ============================================== -->
+    <!-- CLINICAL CALCULATION DRAWER (Bottom Sheet Modal) -->
+    <!-- ============================================== -->
+    <div class="drawer-backdrop" id="calcDrawerBackdrop" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+      <div class="drawer-content">
+        <div class="drawer-drag-pill"></div>
+        <div class="drawer-header">
+          <h2 class="drawer-title" id="drawerTitle">Mathematical Model</h2>
+          <button class="btn-drawer-close" id="btnDrawerClose" aria-label="Close calculation drawer">&times;</button>
+        </div>
+        <div class="drawer-disclaimer-pill">
+          Research heuristic, pending clinical validation.
+        </div>
+        <div id="drawerBodyContent" style="display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--text-xs); line-height: 1.5;">
+          <!-- Dynamically populated depending on which drawer was clicked -->
+        </div>
+      </div>
+    </div>
+
+    <!-- App Footer & Legal Attribution -->
+    <footer class="app-footer">
+      <div class="footer-author">
+        Concept prototype by <strong>Koushik Voota</strong>, Amrita Vishwa Vidyapeetham.
+      </div>
+      <div>
+        L'Oréal Sustainability Challenge 2026 · Option 02: Longevity and Future Aging for GenZ.
+      </div>
+      <div style="color: var(--text-muted); font-size: 10px; margin-top: 4px;">
+        Not an official L'Oréal product. Not medical advice. All analysis executed locally on client device.
+      </div>
+    </footer>
+
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

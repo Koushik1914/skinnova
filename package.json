@@ -1,0 +1,16 @@
+{
+  "name": "skinnova-longevity",
+  "version": "1.0.0",
+  "description": "SKINNOVA - Climate-Adaptive Skin Longevity Prototype for Indian GenZ (L'Oréal Sustainability Challenge 2026)",
+  "author": "Koushik Voota, Amrita Vishwa Vidyapeetham",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}
